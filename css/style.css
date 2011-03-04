@@ -1,0 +1,27 @@
+body {
+        font-family: Helvetica, sans-serif;
+        background: #ddd;
+        margin: 0 auto;
+        overflow: hidden;
+}
+#canvas {
+        position: absolute;
+        left: 0;
+        top: 0;
+}
+.console {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 128px;
+        padding: 2px 0px;
+        margin: 0;
+        overflow: auto;
+        border: 0;
+        color: #111;
+        background-color: rgba(0, 0, 0, 0.5);
+        font-family: Monaco, monospace;
+        font-size: 9pt;
+	display: none;
+}

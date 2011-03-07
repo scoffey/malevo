@@ -48,7 +48,7 @@ Malevo.UIController = new Class({
 			var parts = value.split('\n');
 			if (parts.length > 100) {
 				// prevents log from growing infinitely
-				value = parts.slice(500).join('\n');
+				value = parts.slice(50).join('\n');
 			}
                         value += now + ' ' + message + '\n';
                         console.setProperty('value', value);

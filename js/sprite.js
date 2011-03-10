@@ -13,12 +13,13 @@ Malevo.Sprite = new Class({
 	dy: 0, // y speed (< 0 if jumping up, > 0 if when falling down)
 	name: 'sprite', // sprite name
 	hp: 100, // hit points [0, 100]
-	energy: 0, // energy [0, 100]
+	energy: 100, // energy [0, 100]
 	orientation: 1, // 1 if looking right, -1 if looking left
 	hifight: 1, // 0 if arms are down, 1 if arms are up
 	frame: null, // current frame name
 	state: 'hifight', // current animation state 
 	t: 0, // time (current animation frame index)
+	avatar: 'lofight1',
 	animations: {
 		hifight: ['hifight0', 'hifight1', 'hifight1',
 				'hifight2', 'hifight1', 'hifight1'],
@@ -85,6 +86,7 @@ Malevo.Sprite = new Class({
 	// moves and animates sprite (making a time step)
 	play: function () {
 		this.t++; // time step
+		this.energize(1);
 		this.xmove();
 		this.ymove();
 		return this.update();
@@ -116,10 +118,23 @@ Malevo.Sprite = new Class({
 		return (dx ? true : false);
 	},
 
+	// gives energy
+	energize: function (offset) {
+		var energy = this.energy + offset;
+		if (energy < 0) energy = 0;
+		if (energy > 100) energy = 100;
+		if (energy != this.energy) {
+			this.energy = energy;
+			return true;
+		}
+		return false;
+	},
+
 	// makes the sprite jump
 	jump: function () {
 		if (this.y == 0) {
 			this.state = 'jump';
+			this.energize(-15);
 			this.dy = -3;
 			return true;
 		}
@@ -147,7 +162,12 @@ Malevo.Sprite = new Class({
 	// makes the sprite hit
 	hit: function () {
 		if (this.y < 0) return false;
-		this.state = (this.hifight ? 'hihit' : 'lohit');
+		if (this.energy < 100) {
+			this.state = (this.hifight ? 'hihit' : 'lohit');
+		} else {
+			this.state = 'power';
+		}
+		this.energize(-5);
 		return this._checkhit();
 	},
 

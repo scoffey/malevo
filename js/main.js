@@ -21,26 +21,34 @@ if (MooTools.version == '1.3') {
         alert('FATAL: Cannot initialize Malevo game: ' + s);
 }
 
-// TODO
-// Energy
-// Power attack and KO
+// TODO: Engine tasks
+// Power attack and KO -- review fighting state machine
+// Energy -- make hits dependent on energy
 // CPU player AI
-// Avatar and name
+// Game over event
+// Sound support
+// Background image support
+// Key mapping support
+
+// TODO: Game tasks
 // Background
 // Art
 // Sounds
 // Splash screen
+// Game over screen
 // Character select
 // How to play and keys
-// Canvas scaling and viewport
-// Game over screen
-// Share and virals
 // Credits
-// Rounds: Best of 3
+
+// TODO: Social features
+// Share and virals
+// Facebook connect
+// Embeding
 // Unlocks
 // Leaderboard
-// Embeding
-// Facebook connect
+
+// TODO: Future
+// Rounds: Best of 3
 // Two player game?
 // Web server game?
 // Blood?

@@ -21,9 +21,9 @@ Malevo.UIController = new Class({
                         'keyup:right': this.move.bind(this, [0]),
                         'up': this.fence.bind(this, [1]),
                         'down': this.fence.bind(this, [0]),
-                        ',': this.jump.bind(this),
-                        'keypress:,': this.jump.bind(this),
-                        '.': this.hit.bind(this),
+                        'x': this.jump.bind(this),
+                        'keypress:x': this.jump.bind(this),
+                        'z': this.hit.bind(this),
                         'enter': this.pause.bind(this),
                         'esc': this.toggleConsole.bind(this),
                 };
@@ -48,7 +48,7 @@ Malevo.UIController = new Class({
 			var parts = value.split('\n');
 			if (parts.length > 100) {
 				// prevents log from growing infinitely
-				value = parts.slice(500).join('\n');
+				value = parts.slice(50).join('\n');
 			}
                         value += now + ' ' + message + '\n';
                         console.setProperty('value', value);

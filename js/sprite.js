@@ -19,6 +19,7 @@ Malevo.Sprite = new Class({
 	frame: null, // current frame name
 	state: 'hifight', // current animation state 
 	t: 0, // time (current animation frame index)
+	avatar: 'lofight1',
 	animations: {
 		hifight: ['hifight0', 'hifight1', 'hifight1',
 				'hifight2', 'hifight1', 'hifight1'],

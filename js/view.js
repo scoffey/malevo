@@ -29,6 +29,7 @@ Malevo.CanvasView = new Class({
 	loadImages: function () {
 		var keys = [];
 		Malevo.sprites.each(function (sprite) {
+			keys.push(sprite.avatar);
 			Object.each(sprite.animations, function (frames) {
 				frames.each(function (frame) {
 					if (frame) keys.push(frame);
@@ -43,12 +44,13 @@ Malevo.CanvasView = new Class({
 			images[i] = Asset.image(src, {
 				onLoad: function () {
 					this.images[frame] = images[i];
+					if (++counter == frames.length)
+						this.resize();
 				}.bind(this),
 				onError: function (counter, index, src) {
-				Malevo.log('Failed to load image: ' + src);
+					Malevo.log('Failed to load ' + src);
 				},
 			});
-			if (++counter == frames.length) this.resize();
 		}.bind(this));
 	},
 
@@ -72,26 +74,28 @@ Malevo.CanvasView = new Class({
         // Renders the whole canvas
         render: function () {
 		try {
-			this.drawBackground();
-			this.drawStats(Malevo.sprites[0]);
-			this.drawStats(Malevo.sprites[1]);
-			this.drawSprite(Malevo.sprites[0]);
-			this.drawSprite(Malevo.sprites[1]);
+                	var ctx = this.canvas.getContext('2d');
+			this.drawBackground(ctx);
+			this.drawStats(ctx, Malevo.sprites[0]);
+			this.drawStats(ctx, Malevo.sprites[1]);
+			this.drawSprite(ctx, Malevo.sprites[0]);
+			this.drawSprite(ctx, Malevo.sprites[1]);
 			return true;
 		} catch (e) {
-			if (Malevo.log) Malevo.log(e); // FIXME
+			Malevo.log(e);
 			return false;
 		}
         },
 
 	// Draws background on canvas
-	drawBackground: function () {
-                var ctx = this.canvas.getContext('2d');
+	drawBackground: function (ctx) {
                 ctx.save() // start
                 ctx.fillStyle = '#fff';
                 ctx.fillRect(0, 0, this.size.x, this.size.y);
-                ctx.fillStyle = '#999';
+                ctx.fillStyle = '#666';
                 ctx.font = '8pt Helvetica';
+		var t = 'Tip: Use arrow keys to move, Z to hit and X to jump';
+		ctx.fillText(t, 20, this.size.y - 20);
 		ctx.textAlign = 'end';
 		var t = 'powered by malevo \u00A9 2011 scoffey';
 		ctx.fillText(t, this.size.x - 20, this.size.y - 20);
@@ -99,11 +103,11 @@ Malevo.CanvasView = new Class({
 	},
 
 	// Draws sprite stats (hp, energy, avatar, etc.) on canvas
-	drawStats: function (sprite) {
+	drawStats: function (ctx, sprite) {
 		var margin = 20;
-                var ctx = this.canvas.getContext('2d');
-		var wmax = this.size.x / 2 - 2 * margin;
-                ctx.save() // start
+		var asize = 75;
+		var wmax = this.size.x / 2 - 2 * margin - asize;
+                ctx.save(); // start
 		var lingrad = ctx.createLinearGradient(0, 0,
 				wmax * (4 - sprite.hp / 25), 0);
 		lingrad.addColorStop(0, '#c33');
@@ -114,22 +118,41 @@ Malevo.CanvasView = new Class({
 			ctx.translate(this.size.x, 0);
 			ctx.scale(-1, 1);
 		}
-		ctx.fillRect(margin, margin, sprite.hp / 100 * wmax, 30);
+		ctx.fillRect(margin + asize, margin,
+				sprite.hp / 100 * wmax, 30);
                 // energy
                 ctx.fillStyle = '#00d';
-                ctx.fillRect(margin, margin + 30,
+                ctx.fillRect(75 + margin, margin + 30,
 				sprite.energy / 100 * wmax, 10);
+		// avatar
+                var img = this.images[sprite.avatar];
+		var size = img.width < img.height ? img.width : img.height;
+		ctx.drawImage(img, (img.width - size) / 2,
+			(img.height - size) / 2, size,
+			size, margin, margin, asize, asize);
+		ctx.strokeStyle = 'black';
+		ctx.lineCap = 'round';
+		ctx.lineWidth = 3;
+		ctx.strokeRect(margin, margin, asize, asize);
+                ctx.restore(); // reset
+                ctx.save();
+                ctx.fillStyle = '#000';
+                ctx.font = '20pt Helvetica';
+		ctx.textAlign = (sprite.z == 0 ? 'start' : 'end');
+		var dx = margin + asize + 10;
+		var x = (sprite.z == 0 ? dx : this.size.x - dx);
+		ctx.fillText(sprite.name, x, margin + 70);
                 ctx.restore(); // finish
 	},
 
         // Draws a sprite on canvas, in current position and animation frame
-        drawSprite: function (sprite) {
+        drawSprite: function (ctx, sprite) {
                 var img = this.images[sprite.frame];
-		if (!img || !img.width) {
-			throw 'No image found for frame: ' + sprite.frame;
-		}
                 var w = img.width;
                 var h = img.height;
+		if (!img || !w || !h) {
+			throw 'No image found for frame: ' + sprite.frame;
+		}
 		var wmax = this.size.x / this.scale;
 		var hmax = this.size.y / this.scale;
                 var tx = (wmax - w) / 2 + sprite.x * wmax / 32;

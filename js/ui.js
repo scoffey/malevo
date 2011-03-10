@@ -21,9 +21,9 @@ Malevo.UIController = new Class({
                         'keyup:right': this.move.bind(this, [0]),
                         'up': this.fence.bind(this, [1]),
                         'down': this.fence.bind(this, [0]),
-                        ',': this.jump.bind(this),
-                        'keypress:,': this.jump.bind(this),
-                        '.': this.hit.bind(this),
+                        'x': this.jump.bind(this),
+                        'keypress:x': this.jump.bind(this),
+                        'z': this.hit.bind(this),
                         'enter': this.pause.bind(this),
                         'esc': this.toggleConsole.bind(this),
                 };
